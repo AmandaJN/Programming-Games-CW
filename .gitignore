@@ -30,3 +30,4 @@
 *.exe
 *.out
 *.app
+/GenerateMaze/.vs/GenerateMaze/v16

@@ -1,0 +1,2 @@
+C:\Users\User\Documents\GitHub\Programming-Games-CW\GenerateMaze\Debug\GenerateMaze.exe
+C:\Users\User\Documents\GitHub\Programming-Games-CW\GenerateMaze\Debug\GenerateMaze.pdb
