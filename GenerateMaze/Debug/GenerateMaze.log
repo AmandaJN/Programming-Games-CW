@@ -1,8 +1,9 @@
 ﻿  generate_maze.cpp
-C:\Users\User\Documents\GitHub\Programming-Games-CW\GenerateMaze\generate_maze.cpp(67,31): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
-C:\Users\User\Documents\GitHub\Programming-Games-CW\GenerateMaze\generate_maze.cpp(67,31): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\User\Documents\GitHub\Programming-Games-CW\GenerateMaze\generate_maze.cpp(67,48): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
-C:\Users\User\Documents\GitHub\Programming-Games-CW\GenerateMaze\generate_maze.cpp(67,48): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\User\Documents\GitHub\Programming-Games-CW\GenerateMaze\generate_maze.cpp(106,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\User\Documents\GitHub\Programming-Games-CW\GenerateMaze\generate_maze.cpp(107,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User\Documents\GitHub\Programming-Games-CW\GenerateMaze\generate_maze.cpp(58,31): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
+C:\Users\User\Documents\GitHub\Programming-Games-CW\GenerateMaze\generate_maze.cpp(58,31): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\User\Documents\GitHub\Programming-Games-CW\GenerateMaze\generate_maze.cpp(58,45): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
+C:\Users\User\Documents\GitHub\Programming-Games-CW\GenerateMaze\generate_maze.cpp(58,45): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\User\Documents\GitHub\Programming-Games-CW\GenerateMaze\generate_maze.cpp(99,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User\Documents\GitHub\Programming-Games-CW\GenerateMaze\generate_maze.cpp(113,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\User\Documents\GitHub\Programming-Games-CW\GenerateMaze\generate_maze.cpp(114,21): warning C4018: '<': signed/unsigned mismatch
   GenerateMaze.vcxproj -> C:\Users\User\Documents\GitHub\Programming-Games-CW\GenerateMaze\Debug\GenerateMaze.exe

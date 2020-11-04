@@ -16,6 +16,7 @@ namespace Maze { //Namespace created to have enumerated types for Cell and Point
 		Cell(int x, int y) {
 			coordX = x;
 			coordY = y;
+			visited = false;
 		}
 	};
 	typedef Maze::Cell Cell;
@@ -81,19 +82,19 @@ vector<Cell> GetNeighbours(const char& maze, const Cell& cell, const bool visite
 	vector<Cell> neighbours;
 
 	//north neighbour is x-1, y
-	Cell* northN = new Cell(x - 1, y);
+	Cell* northN = new Cell(x - 2, y);
 	neighbours.push_back(*northN);
 
 	//western neightbour is x, y-1
-	Cell* westN = new Cell(x, y - 1);
+	Cell* westN = new Cell(x, y - 2);
 	neighbours.push_back(*westN);
 
 	//eastern neighbour is x, y+1
-	Cell* eastN = new Cell(x, y + 1);
+	Cell* eastN = new Cell(x, y + 2);
 	neighbours.push_back(*eastN);
 
 	//southern neighbour is x+1, y
-	Cell* southN = new Cell(x + 1, y);
+	Cell* southN = new Cell(x + 2, y);
 	neighbours.push_back(*southN);
 
 	for (int i = 0; i < neighbours.size(); i++) {
@@ -101,37 +102,9 @@ vector<Cell> GetNeighbours(const char& maze, const Cell& cell, const bool visite
 			neighbours.erase(neighbours.begin() + i);
 		}
 	}
+
+	return neighbours;
 }
-
-// maze generation algorithm
-void generateMaze(int rows, int cols) {
-
-	//Create the maze
-	char** maze = initGrid(rows, cols);
-
-	pair<int, int> startPoint = findStartPoint(rows, cols);
-
-	//from there find adjacent tiles (two blocks away)
-	
-	//create a cell object to hold the coordinates of the starting point
-	Cell* startingCell = new Cell(startPoint.first, startPoint.second);
-
-	//create a set to hold the number of Cells on the path
-	vector<Cell> pathSet;
-	pathSet.push_back(*startingCell); //add cell to path
-
-	while (!pathSet.empty()) {
-		//begin search at start of path set as the current cell
-		auto currentCell = pathSet.begin();
-		std::advance(currentCell, pathSet.size()); //move forward
-		(*currentCell).visited = true; //set the current cell as visited
-
-
-	}
-
-}
-
-
 
 //display maze
 void displayMaze(char** maze, int rows, int cols) {
@@ -139,12 +112,40 @@ void displayMaze(char** maze, int rows, int cols) {
 	size_t colCount = cols;
 
 	for (int i = 0; i < rowCount; i++) {
-		for (int j = 0; j < colCount; j ++) {
+		for (int j = 0; j < colCount; j++) {
 			cout << maze[i][j];
 		}
 		cout << endl;
 	}
+
 }
+
+void createCenter(pair<int,int> c, char** m) {
+
+	//<<Left column>>
+	m[c.first - 1][c.second - 1] = ' '; //top
+	m[c.first][c.second - 1] = ' '; //middle
+	m[c.first + 1][c.second - 1] = ' '; //bottom
+
+	//<<Middle column>>
+	m[c.first - 1][c.second] = ' '; //top
+	m[c.first][c.second] = 'S'; //center
+	m[c.first + 1][c.second] = ' '; //bottom
+
+	//<<Right column>>
+	m[c.first - 1][c.second + 1] = ' '; //top
+	m[c.first][c.second + 1] = ' '; //middle
+	m[c.first + 1][c.second + 1] = ' '; //bottom
+}
+
+void genMaze(int rows, int cols) {
+	char** maze = initGrid(rows, cols);
+	pair<int, int> centerCoords = make_pair(rows/2, cols/2);
+	createCenter(centerCoords, maze);
+	displayMaze(maze, rows, cols);
+}
+
+
 
 //main
 int main() {
@@ -157,6 +158,55 @@ int main() {
 	cout << "Select number of exits: ";
 	cin >> exits;
 
-	//displayMaze(maze, rows, cols);
-	generateMaze(rows, cols);
+	//generateMaze(rows, cols);
+	genMaze(rows, cols);
 }
+
+
+
+/////////////////////////////////////////////////////////////////////
+// maze generation algorithm
+/*void generateMaze(int rows, int cols) {
+
+	//Create the maze
+	char** maze = initGrid(rows, cols);
+
+	//vector for maze paths holding the coordinates to the cells
+	vector<pair<int, int>> mazePath;
+
+	pair<int, int> startPoint = findStartPoint(rows, cols);
+
+	//from there find adjacent tiles (two blocks away)
+
+	//create a cell object to hold the coordinates of the starting point
+	Cell* startingCell = new Cell(startPoint.first, startPoint.second);
+
+	//create a set to hold the number of Cells being looked at
+	vector<Cell> pathSet;
+	pathSet.push_back(*startingCell); //add cell to path
+
+	mazePath.push_back(make_pair((*startingCell).coordX, (*startingCell).coordY));
+
+	while (!pathSet.empty()) {
+		//begin search at start of path set as the current cell
+		vector<Cell>::iterator currentCell = pathSet.begin();
+
+		std::advance(currentCell, pathSet.size()); //move forward
+
+		currentCell->visited = true;
+
+		auto neighbours = GetNeighbours(**maze, (*currentCell), true);
+		if (!neighbours.empty())
+		{
+			auto randomIndex = rand() % neighbours.size();
+			mazePath.push_back(make_pair(neighbours[randomIndex].coordX, neighbours[randomIndex].coordY));
+		}
+
+		neighbours = GetNeighbours(**maze, (*currentCell), false);
+		//pathSet.insert(neighbours.begin(), neighbours.end());
+		pathSet.erase(currentCell);
+	}
+
+	displayMaze(maze, rows, cols);
+}
+*/
