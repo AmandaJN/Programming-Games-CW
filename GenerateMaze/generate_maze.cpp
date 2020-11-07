@@ -5,6 +5,8 @@
 #include <set>
 #include <vector>
 #include <time.h>
+#include <queue>
+#include <map>
 
 using namespace std;
 
@@ -12,16 +14,26 @@ namespace Maze { //Namespace created to have enumerated types for Cell and Point
 	struct Cell {
 		int coordX;
 		int coordY;
+		int g;
+		int h;
 		bool visited;
+
+		Cell(){
+			coordX = 0;
+			coordY = 0;
+			g = 0;
+			h = 0;
+		}
 
 		Cell(int x, int y) {
 			coordX = x;
 			coordY = y;
-			visited = false;
+			g = 0;
+			h = 0;
 		}
 
 		bool operator== (const Cell& rhs) {
-			return coordX == rhs.coordX && coordY == rhs.coordY && visited == rhs.visited;
+			return coordX == rhs.coordX && coordY == rhs.coordY;
 		}
 	};
 	typedef Maze::Cell Cell;
@@ -179,7 +191,23 @@ void changeChar(char** m, int r, int c) {
 	m[r][c] = ' ';
 }
 
-void genMaze(int rows, int cols) {
+void placeExits(char** m, int r, int c, int exits) {
+	for (int i = 0; i < exits; i++) {
+		int randSide = rand() % 4;
+		if (randSide == 0 || randSide == 2) {
+			int x = rand() % r - 1;
+			int y = randSide == 1 ? 0 : c - 1;
+			m[x][y] = 'E';
+		}
+		else {
+			int y = rand() % c - 1;
+			int x = randSide == 1 ? 0 : r - 1;
+			m[x][y] = 'E';
+		}
+	}
+}
+
+char** genMaze(int rows, int cols) {
 	char** maze = initGrid(rows, cols);
 	bool** openList = makeOpenList(rows, cols);
 
@@ -227,13 +255,40 @@ void genMaze(int rows, int cols) {
 		int randIndex = pathSet.size() != 0 ? rand() % pathSet.size() : 0;
 		currentCell = pathSet.at(randIndex);
 	}
-
-	pair<int, int> centerCoords = make_pair(rows / 2, cols / 2);
-	createCenter(centerCoords, maze);
-	displayMaze(maze, rows, cols);
+	return maze;
 }
 
+void findPath(Cell start, Cell goal) {
+	start.h = (abs(start.coordX - goal.coordX) + abs(start.coordY - goal.coordY));
 
+	priority_queue<Cell> openSet; //set which will hold all cells visited on path
+	openSet.push(start);
+
+	map<Cell, Cell> cameFrom; //links cell with previous cell
+
+	map<Cell, int> gScore;
+	gScore.insert(make_pair(start, start.g));
+
+	map<Cell, int> fScore;
+	fScore.insert(make_pair(start, gScore[start] + start.h)); // f = g + h;
+
+	while(!openSet.empty()) { //while not empty
+		Cell current;
+		int minF = 0;
+		for (pair<Cell, int> p : fScore) {
+			if (p.second < minF) {
+				minF = p.second;
+			}
+			current = p.first;
+		}
+
+		if (current == goal) {
+			break;
+		}
+
+		openSet.pop();
+	}
+}
 
 //main
 int main() {
@@ -248,5 +303,9 @@ int main() {
 	cin >> exits;
 
 	//generateMaze(rows, cols);
-	genMaze(rows, cols);
+	char** maze = genMaze(rows, cols);
+	pair<int, int> centerCoords = make_pair(rows / 2, cols / 2);
+	createCenter(centerCoords, maze);
+	placeExits(maze, rows, cols, 3);
+	displayMaze(maze, rows, cols);
 }

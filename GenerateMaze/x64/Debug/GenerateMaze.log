@@ -1,6 +1,7 @@
 ﻿  generate_maze.cpp
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(85,31): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(85,31): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(85,45): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(85,45): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(88,31): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(88,31): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(88,45): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(88,45): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(260,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   GenerateMaze.vcxproj -> C:\Users\Amanda\Source\Repos\AmandaJN\Programming-Games-CW\GenerateMaze\x64\Debug\GenerateMaze.exe
