@@ -31,3 +31,13 @@
 *.out
 *.app
 /GenerateMaze/.vs/GenerateMaze/v16
+/GenerateMaze/Debug/GenerateMaze.tlog/unsuccessfulbuild
+/.vs/VSWorkspaceState.json
+/.vs/slnx.sqlite
+/.vs/ProjectSettings.json
+/.vs/Programming-Games-CW/v16/ipch/AutoPCH/7bc3036373a92a4f/GENERATE_MAZE.ipch
+/.vs/Programming-Games-CW/v16/Browse.VC.opendb
+/.vs/Programming-Games-CW/v16/Browse.VC.db-wal
+/.vs/Programming-Games-CW/v16/Browse.VC.db-shm
+/.vs/Programming-Games-CW/v16/Browse.VC.db
+/.vs/Programming-Games-CW/v16/.suo
