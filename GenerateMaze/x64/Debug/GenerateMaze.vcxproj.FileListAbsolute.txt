@@ -1,0 +1,2 @@
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\x64\Debug\GenerateMaze.exe
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\x64\Debug\GenerateMaze.pdb

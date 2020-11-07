@@ -4,6 +4,7 @@
 #include <tuple>
 #include <set>
 #include <vector>
+#include <time.h>
 
 using namespace std;
 
@@ -17,6 +18,10 @@ namespace Maze { //Namespace created to have enumerated types for Cell and Point
 			coordX = x;
 			coordY = y;
 			visited = false;
+		}
+
+		bool operator== (const Cell& rhs) {
+			return coordX == rhs.coordX && coordY == rhs.coordY && visited == rhs.visited;
 		}
 	};
 	typedef Maze::Cell Cell;
@@ -54,6 +59,27 @@ char** initGrid(int row, int col) {
 	return mazeGrid;
 }
 
+bool** makeOpenList(int row, int col) {
+	bool** openList = 0;
+	openList = new bool* [row]; //initialise the array with number of rows
+
+	//for all rows, add columns
+	for (int i = 0; i < row; i++) {
+
+		//add the second array to the current array
+		openList[i] = new bool[col];
+
+		//for all columns and rows, fill in values
+		for (int j = 0; j < col; j++) {
+			//fill the array with 'false' bool values
+			openList[i][j] = false;
+		}
+	}
+
+	return openList;
+}
+
+//find a random start point
 pair<int, int> findStartPoint(int r, int c) {
 	//find the center of the maze coordinates
 	int centerCoords[2] = { floor(r / 2), floor(c / 2) }; //half the input values of the maze then round down to find the index in the array
@@ -65,42 +91,54 @@ pair<int, int> findStartPoint(int r, int c) {
 	while (!isValid) {
 		//pick random start point on the maze
 		//don't pick anywhere in the center square
-		startPoint.first = { (rand() % r) };
-		startPoint.second = { (rand() % c) };
+		startPoint.first = { rand() % r };
+		startPoint.second = { rand() % c };
 
 		//if the current position is within the center square then it isn't valid
-		isValid = startPoint.first != centerCoords[0] && startPoint.second != centerCoords[1] ? true : false;
+		isValid = (startPoint.first != centerCoords[0] && startPoint.second != centerCoords[1] ? true : false);
 	}
 	return startPoint;
 }
 
-//find cell neighbours
-vector<Cell> GetNeighbours(const char& maze, const Cell& cell, const bool visited) {
+//find cell neighbours and return one at random
+vector<pair<Cell, Cell>> GetNeighbours(Cell& cell, int rMax, int cMax, bool** openList) {
 	const auto x = cell.coordX;
 	const auto y = cell.coordY;
 
-	vector<Cell> neighbours;
+	vector<pair<Cell, Cell>> neighbours;
 
 	//north neighbour is x-1, y
-	Cell* northN = new Cell(x - 2, y);
-	neighbours.push_back(*northN);
+	Cell* parentNorth = new Cell(x - 2, y);
+	//if not already visited
+	Cell* childNorth = new Cell(x - 1, y);
+	if ((parentNorth->coordX > 0 && parentNorth->coordX < rMax) && (parentNorth->coordY > 0 && parentNorth->coordY < cMax)) {
+		if (openList[parentNorth->coordX][parentNorth->coordY] == false)
+			neighbours.push_back(make_pair(*parentNorth, *childNorth));
+	}
+
 
 	//western neightbour is x, y-1
-	Cell* westN = new Cell(x, y - 2);
-	neighbours.push_back(*westN);
+	Cell* parentWest = new Cell(x, y - 2);
+	Cell* childWest = new Cell(x, y - 1);
+	if ((parentWest->coordX > 0 && parentWest->coordX < rMax) && (parentWest->coordY > 0 && parentWest->coordY < cMax)) {
+		if (openList[parentWest->coordX][parentWest->coordY] == false)
+			neighbours.push_back(make_pair(*parentWest, *childWest));
+	}
 
-	//eastern neighbour is x, y+1
-	Cell* eastN = new Cell(x, y + 2);
-	neighbours.push_back(*eastN);
+	//eastern neighbour is x, y+2, child is y+1
+	Cell* parentEast = new Cell(x, y + 2);
+	Cell* childEast = new Cell(x, y + 1);
+	if ((parentEast->coordX > 0 && parentEast->coordX < rMax) && (parentEast->coordY > 0 && parentEast->coordY < cMax)) {
+		if (openList[parentEast->coordX][parentEast->coordY] == false)
+			neighbours.push_back(make_pair(*parentEast, *childEast));
+	}
 
 	//southern neighbour is x+1, y
-	Cell* southN = new Cell(x + 2, y);
-	neighbours.push_back(*southN);
-
-	for (int i = 0; i < neighbours.size(); i++) {
-		if (neighbours[i].coordX < 0 || neighbours[i].coordY < 0) {
-			neighbours.erase(neighbours.begin() + i);
-		}
+	Cell* parentSouth = new Cell(x + 2, y);
+	Cell* childSouth = new Cell(x + 1, y);
+	if ((parentSouth->coordX > 0 && parentSouth->coordX < rMax) && (parentSouth->coordY > 0 && parentSouth->coordY < cMax)) {
+		if (openList[parentSouth->coordX][parentSouth->coordY] == false)
+			neighbours.push_back(make_pair(*parentSouth, *childSouth));
 	}
 
 	return neighbours;
@@ -117,10 +155,9 @@ void displayMaze(char** maze, int rows, int cols) {
 		}
 		cout << endl;
 	}
-
 }
 
-void createCenter(pair<int,int> c, char** m) {
+void createCenter(pair<int, int> c, char** m) {
 
 	//<<Left column>>
 	m[c.first - 1][c.second - 1] = ' '; //top
@@ -138,9 +175,60 @@ void createCenter(pair<int,int> c, char** m) {
 	m[c.first + 1][c.second + 1] = ' '; //bottom
 }
 
+void changeChar(char** m, int r, int c) {
+	m[r][c] = ' ';
+}
+
 void genMaze(int rows, int cols) {
 	char** maze = initGrid(rows, cols);
-	pair<int, int> centerCoords = make_pair(rows/2, cols/2);
+	bool** openList = makeOpenList(rows, cols);
+
+	pair<int, int> startPoint = findStartPoint(rows, cols);
+	Cell* startCell = new Cell(startPoint.first, startPoint.second);
+
+	vector<Cell> pathSet;
+	pathSet.push_back(*startCell);
+
+	Cell currentCell = pathSet[0];
+
+	//while there are still tiles to check
+	while (!pathSet.empty()) {
+
+		openList[currentCell.coordX][currentCell.coordY] = true; //mark as visited
+		changeChar(maze, currentCell.coordX, currentCell.coordY); //mark on maze
+
+		vector<pair<Cell, Cell>> neighbourCells = GetNeighbours(currentCell, rows, cols, openList); //find the neighbours
+
+		//if the set of neighbours is not empty
+		if (!neighbourCells.empty()) {
+
+			//for all neighbours
+			for (pair<Cell, Cell> p : neighbourCells) {
+				pathSet.push_back(p.first); //add parent neighbour
+
+				//mark child as visited
+				openList[p.second.coordX][p.second.coordY] = true;
+				changeChar(maze, p.second.coordX, p.second.coordY);
+			}
+
+			auto pos = find(pathSet.begin(), pathSet.end(), currentCell);
+			pathSet.erase(pos); //remove current cell from set
+			//only cell remaining should be the parent neighbour
+
+			neighbourCells.clear();
+		}
+		else {
+			pathSet.erase(find(pathSet.begin(), pathSet.end(), currentCell));
+		}
+
+		if (pathSet.empty())
+			break;
+
+		int randIndex = pathSet.size() != 0 ? rand() % pathSet.size() : 0;
+		currentCell = pathSet.at(randIndex);
+	}
+
+	pair<int, int> centerCoords = make_pair(rows / 2, cols / 2);
 	createCenter(centerCoords, maze);
 	displayMaze(maze, rows, cols);
 }
@@ -149,6 +237,7 @@ void genMaze(int rows, int cols) {
 
 //main
 int main() {
+	srand(time(NULL));
 	int rows, cols, exits;
 
 	cout << "Select number of rows: ";
@@ -161,52 +250,3 @@ int main() {
 	//generateMaze(rows, cols);
 	genMaze(rows, cols);
 }
-
-
-
-/////////////////////////////////////////////////////////////////////
-// maze generation algorithm
-/*void generateMaze(int rows, int cols) {
-
-	//Create the maze
-	char** maze = initGrid(rows, cols);
-
-	//vector for maze paths holding the coordinates to the cells
-	vector<pair<int, int>> mazePath;
-
-	pair<int, int> startPoint = findStartPoint(rows, cols);
-
-	//from there find adjacent tiles (two blocks away)
-
-	//create a cell object to hold the coordinates of the starting point
-	Cell* startingCell = new Cell(startPoint.first, startPoint.second);
-
-	//create a set to hold the number of Cells being looked at
-	vector<Cell> pathSet;
-	pathSet.push_back(*startingCell); //add cell to path
-
-	mazePath.push_back(make_pair((*startingCell).coordX, (*startingCell).coordY));
-
-	while (!pathSet.empty()) {
-		//begin search at start of path set as the current cell
-		vector<Cell>::iterator currentCell = pathSet.begin();
-
-		std::advance(currentCell, pathSet.size()); //move forward
-
-		currentCell->visited = true;
-
-		auto neighbours = GetNeighbours(**maze, (*currentCell), true);
-		if (!neighbours.empty())
-		{
-			auto randomIndex = rand() % neighbours.size();
-			mazePath.push_back(make_pair(neighbours[randomIndex].coordX, neighbours[randomIndex].coordY));
-		}
-
-		neighbours = GetNeighbours(**maze, (*currentCell), false);
-		//pathSet.insert(neighbours.begin(), neighbours.end());
-		pathSet.erase(currentCell);
-	}
-
-	displayMaze(maze, rows, cols);
-}
-*/

@@ -3,7 +3,4 @@ C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate
 C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(85,31): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
 C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(85,45): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
 C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(85,45): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(152,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(153,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(243,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  GenerateMaze.vcxproj -> C:\Users\Amanda\Source\Repos\AmandaJN\Programming-Games-CW\GenerateMaze\Debug\GenerateMaze.exe
+  GenerateMaze.vcxproj -> C:\Users\Amanda\Source\Repos\AmandaJN\Programming-Games-CW\GenerateMaze\x64\Debug\GenerateMaze.exe
