@@ -47,12 +47,6 @@ namespace Maze { //Namespace created to have enumerated types for Cell and Point
 		}
 
 	};
-
-	/*typedef pair<Maze::Cell, Maze::Cell>;
-	pair<Maze::Cell, Maze::Cell> operator== (Cell& lhs, Cell& rhs)
-	{
-		return make_pair(lhs, rhs);
-	};*/
 }
 
 using namespace Maze;
