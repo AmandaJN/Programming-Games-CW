@@ -1,9 +1,30 @@
-XXXXXXXXX
-        E
-XX X X X 
-         
-XX  SooX 
-      o  
-XX X XoX 
-      o  
-XEXXXXEXX
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+X                             
+X X X X X X X X X X X X X X X 
+X                             
+X X X X X X X X X X X X X X X 
+X                             
+X X X X X X X X X X X X X X X 
+X                             
+X X X X X X X X X X X X X X X 
+X                             
+X X X X X X X X X X X X X X X 
+X                            E
+X X X X X X X X X X X X X X Xo
+X                            o
+X X X X X X X     X X X X X Xo
+X              Soooooooooooooo
+X X X X X X X  o  X X X X X X 
+X              o              
+X X X X X X X XoX X X X X X X 
+X              o              
+X X X X X X X XoX X X X X X X 
+X              o              
+X X X X X X X XoX X X X X X X 
+X              o              
+X X X X X X X XoX X X X X X X 
+X              o              
+X X X X X X X XoX X X X X X X 
+X              o              
+X X X X X X X XoX X X X X X X 
+X EoooooooooEooo              

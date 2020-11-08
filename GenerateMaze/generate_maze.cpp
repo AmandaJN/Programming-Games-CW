@@ -2,11 +2,9 @@
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
-#include <tuple>
-#include <set>
+#include <string>
 #include <vector>
 #include <time.h>
-#include <queue>
 #include <map>
 
 using namespace std;
@@ -362,14 +360,14 @@ vector<Cell> placeExits(char** m, int r, int c, int exits) {
 	for (int i = 0; i < exits; i++) {
 		int randSide = rand() % 4;
 		if (randSide == 0 || randSide == 2) {
-			int x = rand() % r - 1;
-			int y = randSide == 1 ? 0 : c - 1;
+			int x = rand() % (r - 1);
+			int y = randSide == 1 ? 0 : (c - 1);
 			m[x][y] = 'E';
 			exit = new Cell(x, y);
 		}
 		else {
-			int y = rand() % c - 1;
-			int x = randSide == 1 ? 0 : r - 1;
+			int y = rand() % (c - 1);
+			int x = randSide == 1 ? 0 : (r - 1);
 			m[x][y] = 'E';
 			exit = new Cell(x, y);
 		}
@@ -461,7 +459,7 @@ Cell** createCellMap(int rows, int cols) {
 	return cellGrid;
 }
 
-//TO-DO//
+//A* Search algorithm to find the shortest path from start to exit
 bool aStarSearch(char** maze, pair<int,int> start, pair<int,int> goal, int rows, int cols, vector<pair<int, int>> &path) {
 	
 	bool** closedList = makeOpenList(rows, cols); //make closedlist
@@ -479,46 +477,50 @@ bool aStarSearch(char** maze, pair<int,int> start, pair<int,int> goal, int rows,
 		Cell* current = openSet[0];
 		int bestF = (openSet[0]->g + openSet[0]->h);
 
-		for (auto& c : openSet) {
-			int cF = c->g + c->h;
+		for (auto& c : openSet) { //for each cell in the open set
+			int cF = c->g + c->h; //check the F value for a better value
 			if (cF < bestF) {
 				bestF = cF;
 				current = c;
 			}
 		}
 
-		if (*current == *destCell) {
-			cout << "Reached goal." << endl;
+		if (*current == *destCell) { //if reached goal cell then break
 			break;
 		}
 
+		//for number of neighbours (4)
 		for (int i = 0; i < 4; i++) {
 			int cellX = current->coordX + (i % 2 == 0 ? i - 1 : 0);
 			int cellY = current->coordY + (i % 2 == 0 ? 0 : i - 2);
 
-			if (cellX < 1 || cellY < 1 || cellX > rows || cellY > cols)
+			//validate the neighbour is on the maze grid
+			if (cellX < 1 || cellY < 1 || cellX > rows-1 || cellY > cols-1)
 				continue;
 
-			Cell* cellChecking = &cellMap[cellX][cellY];
+			Cell* cellChecking = &cellMap[cellX][cellY]; //temporary cell being checked set to cell in map
 
+			//if the cell has already been visited or is a wall
 			if (closedList[cellChecking->coordX][cellChecking->coordY] == true || maze[cellChecking->coordX][cellChecking->coordY] == 'X')
 				continue;
 
-			int tempG = current->g + 1;
-			int tempH = calcHeuristic(*(cellChecking), *destCell);
+			int tempG = current->g + 1; //temporary g value is the current g + 1 (adjacent cell)
+			int tempH = calcHeuristic(*(cellChecking), *destCell); //temporary h value is the value calculated for the cell being checked
 			int tempF = tempG + tempH;
 
+			//if the cell being checked is in the openset or the tempf value is greater than cell f value then continue
 			if ((find(openSet.begin(), openSet.end(), cellChecking) != end(openSet)) && tempF > (cellChecking->g + cellChecking->h)) {
 				continue;
 			}
 			else {
+				//set the values of the cell ebing checked
 				cellChecking->g = tempG;
 				cellChecking->h = tempH;
 				cellChecking->previousX = current->coordX;
 				cellChecking->previousY = current->coordY;
 
 				if (find(openSet.begin(), openSet.end(), cellChecking) == end(openSet))
-					openSet.push_back(cellChecking);
+					openSet.push_back(cellChecking); //add the cell being checked to the openset
 			}
 		}
 		if (find(begin(openSet), end(openSet), current) != end(openSet)) {
@@ -526,7 +528,7 @@ bool aStarSearch(char** maze, pair<int,int> start, pair<int,int> goal, int rows,
 			closedList[current->coordX][current->coordY] = true;
 		}
 	}
-
+	//get the optimum path from the nodes visited and add them to the path vector
 	if (destCell->previousX && destCell->previousY) {
 		Cell* pathCell = destCell;
 		while (pathCell != startCell) {
@@ -598,10 +600,12 @@ bool aStarSearch(char** maze, pair<int,int> start, pair<int,int> goal, int rows,
 		createCenter(centerCoords, maze);
 
 		auto exitCells = placeExits(maze, rows, cols, exits);
-		int index = (rand() % exitCells.size());
-		pair<int, int> exitCell = make_pair(exitCells[index].coordX, exitCells[index].coordY);
 
-		findPath(maze, centerCoords, exitCell, rows, cols);
+		for (int i = 0; i < exitCells.size(); i++) {
+			pair<int,int> exitCell = make_pair(exitCells[i].coordX, exitCells[i].coordY);
+			findPath(maze, centerCoords, exitCell, rows, cols);
+		}
+		
 		displayMaze(maze, rows, cols);
 
 		saveMaze(maze, rows, cols);
@@ -609,7 +613,19 @@ bool aStarSearch(char** maze, pair<int,int> start, pair<int,int> goal, int rows,
 
 	//load a maze file from user input
 	void loadMaze() {
-		//load file
+		cout << "What file would you like to load?" << endl;
+		string choice;
+		cin >> choice;
+
+		ifstream infile;
+		infile.open(choice + ".txt");
+		
+		string line;
+		while (std::getline(infile, line)) {
+			cout << line << endl;
+		}
+
+		infile.close();
 	}
 
 	//Initial menu interface
@@ -644,9 +660,7 @@ bool aStarSearch(char** maze, pair<int,int> start, pair<int,int> goal, int rows,
 
 	//main
 	int main() {
-
 		//srand(time(NULL));
-
 		do {
 			startMenu();
 		} while (executeAgain());
