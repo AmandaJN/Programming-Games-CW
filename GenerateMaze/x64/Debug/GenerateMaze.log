@@ -1,10 +1,10 @@
 ﻿  generate_maze.cpp
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(220,31): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(220,31): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(220,45): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(220,45): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(452,23): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(452,30): warning C4056: overflow in floating-point constant arithmetic
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(453,23): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(453,30): warning C4056: overflow in floating-point constant arithmetic
-  GenerateMaze.vcxproj -> C:\Users\Amanda\Source\Repos\AmandaJN\Programming-Games-CW\GenerateMaze\x64\Debug\GenerateMaze.exe
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(214,31): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(214,31): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(214,45): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(214,45): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(446,23): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(446,30): warning C4056: overflow in floating-point constant arithmetic
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(447,23): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\generate_maze.cpp(447,30): warning C4056: overflow in floating-point constant arithmetic
+  GenerateMaze.vcxproj -> C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\GenerateMaze\x64\Debug\GenerateMaze.exe

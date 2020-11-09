@@ -1,0 +1,14 @@
+﻿  maze_with_players.cpp
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(214,31): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(214,31): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(214,45): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(214,45): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(320,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(321,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(446,23): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(446,30): warning C4056: overflow in floating-point constant arithmetic
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(447,23): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(447,30): warning C4056: overflow in floating-point constant arithmetic
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(551,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(552,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(598,21): warning C4018: '<': signed/unsigned mismatch
