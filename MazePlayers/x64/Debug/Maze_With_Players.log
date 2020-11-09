@@ -1,4 +1,4 @@
 ﻿  maze_with_players.cpp
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(214,31): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
-C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(214,45): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
-  Maze_With_Players.vcxproj -> C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\x64\Debug\Maze_With_Players.exe
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(248,31): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
+C:\Users\Amanda\source\repos\AmandaJN\Programming-Games-CW\MazePlayers\maze_with_players.cpp(248,45): warning C4838: conversion from 'double' to 'int' requires a narrowing conversion
+  Maze_With_Players.vcxproj -> C:\Users\Amanda\Source\Repos\AmandaJN\Programming-Games-CW\MazePlayers\x64\Debug\Maze_With_Players.exe

@@ -47,9 +47,46 @@ namespace Maze { //Namespace created to have enumerated types for Cell and Point
 		}
 
 	};
+
+	struct Player {
+		int x;
+		int y;
+		int at;
+		vector<pair<int, int>> path;
+		bool moved;
+		bool atEnd;
+
+		Player() {
+			this->x = 0;
+			this->y = 0;
+			this->at = 0;
+			this->path = {};
+			this->moved = false;
+			this->atEnd = false;
+		}
+
+		Player(int x, int y, vector<pair<int, int>> path) {
+			this->x = x;
+			this->y = y;
+			this->at = 0;
+			this->path = path;
+			this->moved = false;
+			this->atEnd = false;
+		}
+
+		bool operator== (const Player& rhs) {
+			return x == rhs.x && y == rhs.y;
+		}
+	};
 }
 
 using namespace Maze;
+
+char** maze;
+vector<Player*> players;
+pair<int, int> centerCoords;
+int rows;
+int cols;
 
 //input validation for the start menu of the program
 //returns true of the input is valid
@@ -130,8 +167,8 @@ int validateColumns() {
 	return choice;
 }
 
-//input validation for number of exits
-int validateExits() {
+//input validation for number of entrances
+int validateentrances() {
 	int choice;
 	cin >> choice;
 
@@ -145,13 +182,13 @@ int validateExits() {
 		else if (choice <= 0) {
 			cin.clear();
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			cout << "Input incorrect. Must have at least one exit." << endl;
+			cout << "Input incorrect. Must have at least one entrance." << endl;
 			cin >> choice;
 		}
 		else if (choice > 4) {
 			cin.clear();
 			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			cout << "Input incorrect. No more than 4 exits." << endl;
+			cout << "Input incorrect. No more than 4 entrances." << endl;
 			cin >> choice;
 		}
 		else {
@@ -163,24 +200,21 @@ int validateExits() {
 }
 
 //initialise grid
-char** initGrid(int row, int col) {
-	char** mazeGrid = 0;
-	mazeGrid = new char* [row]; //initialise the array with number of rows
+void initGrid(int row, int col) {
+	maze = new char* [row]; //initialise the array with number of rows
 
 	//for all rows, add columns
 	for (int i = 0; i < row; i++) {
 
 		//add the second array to the current array
-		mazeGrid[i] = new char[col];
+		maze[i] = new char[col];
 
 		//for all columns and rows, fill in values
 		for (int j = 0; j < col; j++) {
 			//fill the array with X chars
-			mazeGrid[i][j] = 'X';
+			maze[i][j] = 'X';
 		}
 	}
-
-	return mazeGrid;
 }
 
 bool isValid(int row, int col, int maxR, int maxC) {
@@ -313,66 +347,76 @@ vector<Cell> GetPathNeighbours(Cell& cell, int rMax, int cMax, bool** openList) 
 }
 
 //display maze
-void displayMaze(char** maze, int rows, int cols) {
+void displayMaze() {
 	size_t rowCount = rows;
 	size_t colCount = cols;
 
 	for (int i = 0; i < rowCount; i++) {
 		for (int j = 0; j < colCount; j++) {
-			cout << maze[i][j];
+			bool playerFound = false;
+			for (Player* p : players) {
+				if (p->x == i && p->y == j) {
+					playerFound = true;
+				}
+			}
+			if (playerFound) {
+				cout << 'P';
+			}
+			else { cout << maze[i][j]; }
 		}
 		cout << endl;
 	}
+	cout << endl;
 }
 
-void createCenter(pair<int, int> c, char** m) {
+void createCenter(pair<int, int> c) {
 
 	//<<Left column>>
-	m[c.first - 1][c.second - 1] = ' '; //top
-	m[c.first][c.second - 1] = ' '; //middle
-	m[c.first + 1][c.second - 1] = ' '; //bottom
+	maze[c.first - 1][c.second - 1] = ' '; //top
+	maze[c.first][c.second - 1] = ' '; //middle
+	maze[c.first + 1][c.second - 1] = ' '; //bottom
 
 	//<<Middle column>>
-	m[c.first - 1][c.second] = ' '; //top
-	m[c.first][c.second] = 'S'; //center
-	m[c.first + 1][c.second] = ' '; //bottom
+	maze[c.first - 1][c.second] = ' '; //top
+	maze[c.first][c.second] = 'F'; //center
+	maze[c.first + 1][c.second] = ' '; //bottom
 
 	//<<Right column>>
-	m[c.first - 1][c.second + 1] = ' '; //top
-	m[c.first][c.second + 1] = ' '; //middle
-	m[c.first + 1][c.second + 1] = ' '; //bottom
+	maze[c.first - 1][c.second + 1] = ' '; //top
+	maze[c.first][c.second + 1] = ' '; //middle
+	maze[c.first + 1][c.second + 1] = ' '; //bottom
 }
 
-void changeChar(char** m, int r, int c) {
-	m[r][c] = ' ';
+void changeChar(int r, int c) {
+	maze[r][c] = ' ';
 }
 
-//place random exits at any side in the maze
-vector<Cell> placeExits(char** m, int r, int c, int exits) {
-	vector<Cell> exitCells;
-	Cell* exit;
-	for (int i = 0; i < exits; i++) {
+//place random entrances at any side in the maze
+vector<Cell> placeEntrances(int r, int c, int entrances) {
+	vector<Cell> entranceCells;
+	Cell* entrance;
+	for (int i = 0; i < entrances; i++) {
 		int randSide = rand() % 4;
-		if (randSide == 0 || randSide == 2) {
-			int x = rand() % (r - 1);
-			int y = randSide == 1 ? 0 : (c - 1);
-			m[x][y] = 'E';
-			exit = new Cell(x, y);
+		if (randSide == 0 || randSide == 2) { //left, right
+			int x = (rand() % (r - 2))+1;
+			int y = randSide == 0 ? 1 : (c - 2)+1;
+			maze[x][y] = 'E';
+			entrance = new Cell(x, y);
 		}
 		else {
-			int y = rand() % (c - 1);
-			int x = randSide == 1 ? 0 : (r - 1);
-			m[x][y] = 'E';
-			exit = new Cell(x, y);
+			int y = (rand() % (c - 2))+1; //top, bottom
+			int x = randSide == 1 ? 1 : (r - 2)+1;
+			maze[x][y] = 'E';
+			entrance = new Cell(x, y);
 		}
-		exitCells.push_back(*exit);
+		entranceCells.push_back(*entrance);
 	}
 
-	return exitCells;
+	return entranceCells;
 }
 
-char** genMaze(int rows, int cols) {
-	char** maze = initGrid(rows, cols);
+void genMaze(int rows, int cols) {
+	initGrid(rows, cols);
 	bool** openList = makeOpenList(rows, cols);
 
 	pair<int, int> startPoint = findStartPoint(rows, cols);
@@ -387,7 +431,7 @@ char** genMaze(int rows, int cols) {
 	while (!pathSet.empty()) {
 
 		openList[currentCell.coordX][currentCell.coordY] = true; //mark as visited
-		changeChar(maze, currentCell.coordX, currentCell.coordY); //mark on maze
+		changeChar(currentCell.coordX, currentCell.coordY); //mark on maze
 
 		auto neighbourCells = GetNeighbours(currentCell, rows, cols, openList); //find the neighbours, returns a vector of pairs
 
@@ -400,7 +444,7 @@ char** genMaze(int rows, int cols) {
 
 				//mark child as visited
 				openList[p.second.coordX][p.second.coordY] = true;
-				changeChar(maze, p.second.coordX, p.second.coordY);
+				changeChar(p.second.coordX, p.second.coordY);
 			}
 
 			auto pos = find(pathSet.begin(), pathSet.end(), currentCell);
@@ -419,8 +463,6 @@ char** genMaze(int rows, int cols) {
 		int randIndex = pathSet.size() != 0 ? rand() % pathSet.size() : 0;
 		currentCell = pathSet.at(randIndex);
 	}
-
-	return maze;
 }
 
 int calcHeuristic(Cell src, Cell dest) {
@@ -430,7 +472,7 @@ int calcHeuristic(Cell src, Cell dest) {
 
 Cell** createCellMap(int rows, int cols) {
 	Cell** cellGrid;
-	cellGrid = new Cell* [rows]; //initialise the array with number of rows
+	cellGrid = new Cell * [rows]; //initialise the array with number of rows
 
 	//for all rows, add columns
 	for (int i = 0; i < rows; i++) {
@@ -453,9 +495,10 @@ Cell** createCellMap(int rows, int cols) {
 	return cellGrid;
 }
 
-//A* Search algorithm to find the shortest path from start to exit
-bool aStarSearch(char** maze, pair<int,int> start, pair<int,int> goal, int rows, int cols, vector<pair<int, int>> &path) {
-	
+//A* Search algorithm to find the shortest path from start to entrance
+//returns the path
+vector<pair<int,int>> aStarSearch(pair<int, int> start, pair<int, int> goal, int rows, int cols) {
+
 	bool** closedList = makeOpenList(rows, cols); //make closedlist
 	Cell** cellMap = createCellMap(rows, cols);
 
@@ -489,7 +532,7 @@ bool aStarSearch(char** maze, pair<int,int> start, pair<int,int> goal, int rows,
 			int cellY = current->coordY + (i % 2 == 0 ? 0 : i - 2);
 
 			//validate the neighbour is on the maze grid
-			if (cellX < 1 || cellY < 1 || cellX > rows-1 || cellY > cols-1)
+			if (cellX < 1 || cellY < 1 || cellX > rows - 1 || cellY > cols - 1)
 				continue;
 
 			Cell* cellChecking = &cellMap[cellX][cellY]; //temporary cell being checked set to cell in map
@@ -514,7 +557,7 @@ bool aStarSearch(char** maze, pair<int,int> start, pair<int,int> goal, int rows,
 				cellChecking->previousY = current->coordY;
 
 				if (find(openSet.begin(), openSet.end(), cellChecking) == end(openSet))
-					openSet.push_back(cellChecking); //add the cell being checked to the openset
+					openSet.emplace_back(cellChecking); //add the cell being checked to the openset
 			}
 		}
 		if (find(begin(openSet), end(openSet), current) != end(openSet)) {
@@ -522,141 +565,193 @@ bool aStarSearch(char** maze, pair<int,int> start, pair<int,int> goal, int rows,
 			closedList[current->coordX][current->coordY] = true;
 		}
 	}
+	vector<pair<int, int>> path;
 	//get the optimum path from the nodes visited and add them to the path vector
 	if (destCell->previousX && destCell->previousY) {
 		Cell* pathCell = destCell;
 		while (pathCell != startCell) {
-			pair<int,int> p = make_pair(pathCell->coordX, pathCell->coordY);
-			path.push_back(p);
+			pair<int, int> p (pathCell->coordX, pathCell->coordY);
+			path.emplace_back(p);
 			pathCell = &cellMap[pathCell->previousX][pathCell->previousY];
 		}
 	}
 
-	return true;
+	return path;
+
 }
 
-	//Opens and saves a new maze file
-	void createMazeFile(char** m, int rows, int cols) {
-		string fileName;
-		cout << "Name of file: " << endl;
-		cin >> fileName;
+//Opens and saves a new maze file
+void createMazeFile(int rows, int cols) {
+	string fileName;
+	cout << "Name of file: " << endl;
+	cin >> fileName;
 
-		ofstream outFile;
-		outFile.open((fileName + ".txt"), ios::out); //open file using input name
+	ofstream outFile;
+	outFile.open((fileName + ".txt"), ios::out); //open file using input name
 
-		size_t rowCount = rows;
-		size_t colCount = cols;
+	size_t rowCount = rows;
+	size_t colCount = cols;
 
-		//for each row and column, output the maze to the file
-		for (int i = 0; i < rowCount; i++) {
-			for (int j = 0; j < colCount; j++) {
-				outFile << m[i][j];
+	//for each row and column, output the maze to the file
+	for (int i = 0; i < rowCount; i++) {
+		for (int j = 0; j < colCount; j++) {
+			outFile << maze[i][j];
+		}
+		outFile << endl;
+	}
+
+	outFile.close();
+}
+
+//Save a maze generated into file format
+void saveMaze(int rows, int cols) {
+	char choice;
+	cout << "Would you like to save this maze? (Y/N)" << endl; //input prompt, need to validate input
+	cin >> choice;
+
+	if (choice == 'Y' || choice == 'y') {
+		createMazeFile(rows, cols);
+	}
+}
+
+void setPlayerPath(Player* player, pair<int, int> center, pair<int, int> entrance, int rows, int cols) {
+	vector<pair<int, int>> path = aStarSearch(center, entrance, rows, cols);
+	player->path = path;
+}
+
+void play() {
+	bool end = true;
+	bool playersStuck = false;
+	for (Player* p : players) {
+		if (!p->atEnd) {
+			int nextX = p->path.at(p->at).first;
+			int nextY = p->path.at(p->at).second;
+
+			if (p->path.back().first == nextX && p->path.back().second == nextY) {
+				p->atEnd = true;
+				p->moved = true;
+				p->x = nextX;
+				p->y = nextY;
+				continue;
 			}
-			outFile << endl;
-		}
+			bool canMove = true;
+			//check if another player in cell
+			for (Player* e : players) {
+				if (*p == *e) continue; //if enemy player is in the cell, avoid deadlock by waiting
+				canMove &= !(e->x == nextX && e->y == nextY);
+			}
 
-		outFile.close();
-	}
+			p->moved = !canMove;
+			p->x = (nextX * canMove) + (p->x * !canMove);
+			p->y = (nextY * canMove) + (p->y * !canMove);
+			p->at += canMove;
 
-	//Save a maze generated into file format
-	void saveMaze(char** m, int rows, int cols) {
-		char choice;
-		cout << "Would you like to save this maze? (Y/N)" << endl; //input prompt, need to validate input
-		cin >> choice;
-
-		if (choice == 'Y' || choice == 'y') {
-			createMazeFile(m, rows, cols);
-		}
-	}
-
-	void findPath(char** maze, pair<int, int> center, pair<int,int> exit, int rows, int cols) {
-		vector<pair<int, int>> path;
-		bool queueList = aStarSearch(maze, center, exit, rows, cols, path);
-		for (auto p : path) {
-			if(maze[p.first][p.second] != 'E')
-				maze[p.first][p.second] = 'o';
+			playersStuck &= canMove;
+			
 		}
 	}
 
-	//Create a new maze using user input
-	void newMaze() {
-		int rows, cols, exits;
-
-		cout << "Select number of rows: ";
-		rows = validateRows();
-		cout << "Select number of columns: ";
-		cols = validateColumns();
-		cout << "Select number of exits: ";
-		exits = validateExits();
-
-		char** maze = genMaze(rows, cols);
-		auto centerCoords = make_pair(rows / 2, cols / 2);
-		createCenter(centerCoords, maze);
-
-		auto exitCells = placeExits(maze, rows, cols, exits);
-
-		for (int i = 0; i < exitCells.size(); i++) {
-			pair<int,int> exitCell = make_pair(exitCells[i].coordX, exitCells[i].coordY);
-			findPath(maze, centerCoords, exitCell, rows, cols);
-		}
-		
-		displayMaze(maze, rows, cols);
-
-		saveMaze(maze, rows, cols);
+	for (Player* p : players) {
+		end &= p->atEnd;
 	}
 
-	//load a maze file from user input
-	void loadMaze() {
-		cout << "What file would you like to load?" << endl;
-		string choice;
-		cin >> choice;
+	if (!end) {
+		displayMaze();
+		saveMaze(rows, cols);
+		play();
+	}
+}
 
-		ifstream infile;
-		infile.open(choice + ".txt");
-		
+//Create a new maze using user input
+void newMaze() {
+	int entrances;
+
+	cout << "Select number of rows: ";
+	rows = validateRows();
+	cout << "Select number of columns: ";
+	cols = validateColumns();
+	cout << "Select number of entrances: ";
+	entrances = validateentrances();
+
+	genMaze(rows, cols);
+	centerCoords = make_pair(rows / 2, cols / 2);
+	createCenter(centerCoords);
+
+	auto entranceCells = placeEntrances(rows, cols, entrances);
+	//number of entrances = number of players
+
+	for (int i = 0; i < entranceCells.size(); i++) {
+		//cout << "Player " << i+1 << " tracking..." << endl; //statement for UI showing player movement
+		pair<int, int> entranceCell = make_pair(entranceCells[i].coordX, entranceCells[i].coordY);
+		Player* p = new Player;
+		p->x = entranceCell.first;
+		p->y = entranceCell.second;
+		setPlayerPath(p, centerCoords, entranceCell, rows, cols);
+		players.emplace_back(p);
+	}
+
+	play();
+	//saveMaze(rows, cols);
+}
+
+//load a maze file from user input
+void loadMaze() {
+	cout << "What file would you like to load?" << endl;
+	string choice;
+	cin >> choice;
+
+	ifstream infile;
+	infile.open(choice + ".txt");
+
+	if (infile) { //if file exists
 		string line;
 		while (std::getline(infile, line)) {
 			cout << line << endl;
 		}
-
 		infile.close();
 	}
-
-	//Initial menu interface
-	void startMenu() {
-		cout << "Would you like to: " << endl;
-
-		cout << "\t 1. Start a new maze" << endl;
-		cout << "\t 2. Load an existing maze" << endl;
-
-		int validInput = validateMenu();
-
-		if (validInput == 1) {
-			newMaze();
-		}
-		else {
-			loadMaze();
-		}
+	else { //else throw error (fstream does not throw exceptions)
+		cout << "File does not exist. Try again." << endl;
+		loadMaze();
 	}
 
-	bool executeAgain() {
-		char choice;
-		cout << "Would you like to execute again? (Y/N)" << endl;
-		cin >> choice;
+}
 
-		if (choice == 'Y' || choice == 'y') {
-			return true;
-		}
-		else {
-			return false;
-		}
+//Initial menu interface
+void startMenu() {
+	cout << "Would you like to: " << endl;
+
+	cout << "\t 1. Start a new maze" << endl;
+	cout << "\t 2. Load an existing maze" << endl;
+
+	int validInput = validateMenu();
+
+	if (validInput == 1) {
+		newMaze();
 	}
-
-	//main
-	int main() {
-		//srand(time(NULL));
-		do {
-			startMenu();
-		} while (executeAgain());
-
+	else {
+		loadMaze();
 	}
+}
+
+bool executeAgain() {
+	char choice;
+	cout << "Would you like to execute again? (Y/N)" << endl;
+	cin >> choice;
+
+	if (choice == 'Y' || choice == 'y') {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+//main
+int main() {
+	srand(time(NULL));
+	do {
+		startMenu();
+	} while (executeAgain());
+
+}
